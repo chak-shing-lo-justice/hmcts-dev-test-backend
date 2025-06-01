@@ -9,21 +9,20 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.hmcts.reform.dev.annotations.RequireLoginSession;
 import uk.gov.hmcts.reform.dev.exceptions.cases.UnauthorizedException;
-import uk.gov.hmcts.reform.dev.services.AuthService;
+import uk.gov.hmcts.reform.dev.services.AuthenticationService;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AuthorizationInterceptors implements HandlerInterceptor {
-    private final AuthService authService;
+public class AuthorizationInterceptor implements HandlerInterceptor {
+    private final AuthenticationService authenticationService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
         if (requireLoginSession(handler)) {
             String authToken = request.getHeader("Authorization");
-            if (!authService.isUserLoggedIn(authToken)) {
+            if (!authenticationService.authenticateUserToken(authToken)) {
                 throw new UnauthorizedException();
             }
-            authService.setCurrentUser(authToken);
         }
         return true;
     }

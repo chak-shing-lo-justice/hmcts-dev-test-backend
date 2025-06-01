@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.dev.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,10 @@ import java.util.Optional;
  * Provides methods for maintaining user profiles, logging in, logging out,
  * and checking login status
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AuthService {
-    private static final ThreadLocal<String> USER_TOKEN = new ThreadLocal<>();
+public class AuthenticationService {
+    private static final ThreadLocal<UserProfile> USER_PROFILE = new ThreadLocal<>();
     private final LocalDateTimeProvider time;
     private final UserProfileRepository userProfileRepository;
 
@@ -58,28 +56,31 @@ public class AuthService {
         }
     }
 
-    public boolean logout(String bearerToken) {
-        getUserProfileByToken(bearerToken)
-            .ifPresent(userProfile -> {
-                userProfile.setToken(null);
-                userProfileRepository.save(userProfile);
-            });
+    public boolean logout() {
+        UserProfile userProfile = USER_PROFILE.get();
+        userProfile.setToken(null);
+        userProfileRepository.save(userProfile);
         return true;
     }
 
-    public boolean isUserLoggedIn(String bearerToken) {
-        return Optional.ofNullable(bearerToken)
-            .map(this::getUserProfileByToken)
-            .isPresent();
+    public boolean authenticateUserToken(String bearerToken) {
+        Optional<UserProfile> userProfileOptional = Optional.ofNullable(bearerToken)
+            .flatMap(this::getUserProfileByToken);
+
+        if (userProfileOptional.isPresent()) {
+            USER_PROFILE.set(userProfileOptional.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void setCurrentUser(String token) {
-        USER_TOKEN.set(token);
+    public UserProfile getUserProfile() {
+        return USER_PROFILE.get();
     }
 
     @Cacheable(cacheManager = "requestScopedCacheManager", cacheNames = "getUserProfileByToken")
     public Optional<UserProfile> getUserProfileByToken(String bearerToken) {
-        log.info("Getting user profile by token {}", bearerToken);
         return userProfileRepository.findByToken(bearerToken.replace("Bearer ", ""));
     }
 }

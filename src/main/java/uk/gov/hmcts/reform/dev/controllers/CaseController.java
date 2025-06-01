@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.dev.annotations.RequireLoginSession;
-import uk.gov.hmcts.reform.dev.enums.CaseStatus;
 import uk.gov.hmcts.reform.dev.exceptions.cases.CaseNotFoundException;
 import uk.gov.hmcts.reform.dev.models.data.CaseData;
 import uk.gov.hmcts.reform.dev.services.SearchCaseService;
 import uk.gov.hmcts.reform.dev.services.UpdateCaseService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -34,14 +32,6 @@ import static org.springframework.http.ResponseEntity.ok;
 public class CaseController {
     private final SearchCaseService searchCaseService;
     private final UpdateCaseService updateCaseService;
-
-    @GetMapping(value = "/get-example-case", produces = "application/json")
-    public ResponseEntity<CaseData> getExampleCase() {
-        return ok(new CaseData(1L, "ABC12345", "Case Title",
-                               "Case Description", CaseStatus.OPEN,
-                               LocalDateTime.now(), LocalDateTime.now()
-        ));
-    }
 
     @GetMapping(value = "/{caseId}", produces = "application/json")
     public List<CaseData> getCaseById(@PathVariable Integer caseId) {
@@ -66,8 +56,8 @@ public class CaseController {
     }
 
     @DeleteMapping(value = "/{caseId}", produces = "application/json")
-    public int deleteCase(@PathVariable Long caseId) {
-        return updateCaseService.deleteCaseById(caseId);
+    public ResponseEntity<Void> deleteCase(@PathVariable Long caseId) {
+        updateCaseService.deleteCaseById(caseId);
+        return ok().build();
     }
-
 }

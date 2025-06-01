@@ -197,3 +197,8 @@ rootProject.tasks.named("processSmokeTestResources") {
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
+
+tasks.register('runWithDocker', Exec) {
+  dependsOn("bootJar")
+  commandLine 'docker', 'compose', 'up', '--build', '--force-recreate', '--remove-orphans'
+}
