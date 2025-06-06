@@ -24,7 +24,7 @@ public class ExceptionLoggingAdvice {
     private final RequestAuditLogService requestAuditLogService;
 
     @ExceptionHandler(Exception.class)
-    public void logAllExceptions(Exception ex, HttpServletRequest request) throws Exception {
+    public ResponseEntity<Object> logAllExceptions(Exception ex, HttpServletRequest request) throws Exception {
         log.error(REQUEST_ERROR_FORMAT, request.getMethod(), request.getRequestURI(), ex);
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
