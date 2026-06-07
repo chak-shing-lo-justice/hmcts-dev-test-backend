@@ -41,7 +41,8 @@ public class UpdateTaskService {
         return taskRepository.save(existingData.orElseThrow(IdNotFoundException::new).toBuilder()
                                        .title(taskData.getTitle())
                                        .description(taskData.getDescription())
-                                       .status(taskData.getStatus())
+                                       .status(taskData.getStatus() == null
+                                                   ? existingData.get().getStatus() : taskData.getStatus())
                                        .build());
     }
 
