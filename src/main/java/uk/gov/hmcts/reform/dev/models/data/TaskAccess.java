@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Data
-@IdClass(CaseAccess.CaseAccessId.class)
-public class CaseAccess {
+@IdClass(TaskAccess.TaskAccessId.class)
+public class TaskAccess {
     @Id
-    @JoinColumn(name = "case_data", referencedColumnName = "id")
-    private Long caseId;
+    @JoinColumn(name = "task_data", referencedColumnName = "id")
+    private Long taskId;
 
     @Id
     private String username;
@@ -27,8 +27,8 @@ public class CaseAccess {
     @Embeddable
     @Data
     @NoArgsConstructor
-    public static class CaseAccessId {
-        private Long caseId;
+    public static class TaskAccessId {
+        private Long taskId;
         private String username;
     }
 }

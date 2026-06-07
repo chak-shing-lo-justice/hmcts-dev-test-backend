@@ -3,10 +3,10 @@ package uk.gov.hmcts.reform.dev.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.dev.enums.CaseStatus;
+import uk.gov.hmcts.reform.dev.enums.TaskStatus;
 import uk.gov.hmcts.reform.dev.exceptions.cases.UnauthorizedException;
-import uk.gov.hmcts.reform.dev.models.data.CaseData;
-import uk.gov.hmcts.reform.dev.repositories.CaseRepository;
+import uk.gov.hmcts.reform.dev.models.data.TaskData;
+import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,33 +17,33 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class SearchCaseService {
-    private final CaseRepository caseRepository;
+public class SearchTaskService {
+    private final TaskRepository taskRepository;
     private final AuthorizationService authorizationService;
 
-    public Optional<CaseData> getCaseById(long caseId) {
+    public Optional<TaskData> getById(long caseId) {
         if (authorizationService.hasAccess(caseId)) {
-            return caseRepository.findById(caseId);
+            return taskRepository.findById(caseId);
         } else {
             throw new UnauthorizedException();
         }
     }
 
-    public List<CaseData> getAllCases() {
+    public List<TaskData> getAll() {
         // TODO implement pagination
-        return filterCases(caseRepository.findAll());
+        return filterValid(taskRepository.findAll());
     }
 
-    public List<CaseData> searchCaseByTitle(String caseTitle) {
-        if (caseTitle == null || caseTitle.isEmpty()) {
-            return List.of();
-        }
-        return filterCases(caseRepository.findAllByTitleContainsIgnoreCase(caseTitle.trim()));
+    public List<TaskData> searchByTitle(String caseTitle) {
+        return filterValid(
+            (caseTitle == null || caseTitle.isEmpty())
+                ? taskRepository.findAll()
+                : taskRepository.findAllByTitleContainsIgnoreCase(caseTitle.trim()));
     }
 
-    private List<CaseData> filterCases(List<CaseData> cases) {
+    private List<TaskData> filterValid(List<TaskData> cases) {
         return cases.stream()
-            .filter(caseData -> !CaseStatus.DELETED.equals(caseData.getStatus()))
+            .filter(caseData -> !TaskStatus.DELETED.equals(caseData.getStatus()))
             .filter(caseData -> authorizationService.hasAccess(caseData.getId()))
             .toList();
     }

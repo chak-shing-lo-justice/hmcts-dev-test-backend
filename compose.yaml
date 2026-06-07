@@ -12,7 +12,7 @@ services:
       DB_USER_PASSWORD: ${DB_USER_PASSWORD}
   db:
     image: postgres:latest
-    container_name: case-db
+    container_name: hmcts-db
     environment:
       POSTGRES_USER: ${DB_USER_NAME}
       POSTGRES_PASSWORD: ${DB_USER_PASSWORD}

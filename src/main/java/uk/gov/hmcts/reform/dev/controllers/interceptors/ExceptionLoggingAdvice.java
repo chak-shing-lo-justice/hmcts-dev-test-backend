@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
 import uk.gov.hmcts.reform.dev.exceptions.cases.HandledException;
 import uk.gov.hmcts.reform.dev.services.RequestAuditLogService;
 

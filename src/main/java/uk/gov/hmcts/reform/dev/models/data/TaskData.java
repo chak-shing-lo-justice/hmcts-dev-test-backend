@@ -11,10 +11,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.extern.jackson.Jacksonized;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import uk.gov.hmcts.reform.dev.enums.CaseStatus;
+import uk.gov.hmcts.reform.dev.enums.TaskStatus;
 
 import java.time.LocalDateTime;
 
@@ -22,18 +21,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Jacksonized
+//@Jacksonized
 @Data
 @EqualsAndHashCode
-public class CaseData implements TransactionalAware {
+public class TaskData implements TransactionalAware {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String caseNumber;
     private String title;
     private String description;
     @Enumerated(EnumType.STRING)
-    private CaseStatus status;
+    private TaskStatus status;
+    private LocalDateTime dueDateTime;
 
     @CreationTimestamp
     private LocalDateTime createdDate;

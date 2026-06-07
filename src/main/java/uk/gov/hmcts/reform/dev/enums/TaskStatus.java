@@ -2,12 +2,12 @@ package uk.gov.hmcts.reform.dev.enums;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public enum CaseStatus {
+public enum TaskStatus {
     // TODO support i18n labeling?
-    @JsonProperty("Open case")
+    @JsonProperty("Opened")
     OPEN,
-    @JsonProperty("Closed case")
+    @JsonProperty("Closed")
     CLOSED,
-    @JsonProperty("Deleted case")
+    @JsonProperty("Deleted")
     DELETED
 }
